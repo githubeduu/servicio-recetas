@@ -1,9 +1,6 @@
 package com.example.servicio_recetas.service;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,18 +64,29 @@ public class RecetasLmpl implements RecetasService{
 
     @Override
     public void saveYoutubeLink(Long recetaId, String youtubeUrl) {
-    RecetaMedia media = new RecetaMedia();
-    media.setRecetaId(recetaId);
-    media.setTipo("youtube");
-    media.setContenido(youtubeUrl.getBytes(StandardCharsets.UTF_8)); // Guardar el enlace como bytes
-    media.setEsPortada("N");
+        RecetaMedia media = new RecetaMedia();
+        media.setRecetaId(recetaId);
+        media.setTipo("youtube");
+        media.setYoutubeUrl(transformarYoutubeUrl(youtubeUrl)); // Guardar enlace en la columna youtubeUrl
+        media.setEsPortada("N");
 
-    recetaMediaRepository.save(media);
+        recetaMediaRepository.save(media);
     }
 
     @Override
     public List<RecetaMedia> getMediaByRecetaId(Long recetaId) {
         return recetaMediaRepository.findByRecetaId(recetaId);
+    }
+
+    private String transformarYoutubeUrl(String youtubeUrl) {
+        if (youtubeUrl.contains("youtu.be")) {
+            return youtubeUrl.replace("youtu.be/", "www.youtube.com/embed/");
+        } else if (youtubeUrl.contains("youtube.com/shorts/")) {
+            return youtubeUrl.replace("youtube.com/shorts/", "youtube.com/embed/");
+        } else if (youtubeUrl.contains("watch?v=")) {
+            return youtubeUrl.replace("watch?v=", "embed/");
+        }
+        return youtubeUrl; // Devuelve la URL original si no coincide
     }
 
 

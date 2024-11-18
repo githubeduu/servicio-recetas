@@ -106,10 +106,10 @@ public class RecetasController {
                 .map(media -> "http://localhost:8087/recetas/" + recetaId + "/media/" + media.getMediaId() + "/video")
                 .toList();
 
-        // Filtrar enlaces de YouTube
+        // Filtrar enlaces de YouTube (usando la nueva columna youtubeUrl)
         List<String> youtubeLinks = medios.stream()
-                .filter(media -> media.getTipo().equalsIgnoreCase("youtube"))
-                .map(media -> new String(media.getContenido(), StandardCharsets.UTF_8)) // Convertir bytes a String
+                .filter(media -> media.getTipo().equalsIgnoreCase("youtube") && media.getYoutubeUrl() != null)
+                .map(RecetaMedia::getYoutubeUrl)
                 .toList();
 
         // Crear un mapa con los resultados
@@ -120,6 +120,7 @@ public class RecetasController {
 
         return ResponseEntity.ok(resultado);
     }
+
 
 
 
