@@ -9,27 +9,34 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.servicio_recetas.DTO.ComentarioDTO;
+import com.example.servicio_recetas.model.Comentarios;
 import com.example.servicio_recetas.model.RecetaDetalle;
 import com.example.servicio_recetas.model.RecetaMedia;
 import com.example.servicio_recetas.model.Recetas;
+import com.example.servicio_recetas.service.ComentariosService;
 import com.example.servicio_recetas.service.RecetasService;
 
 @RestController
 @RequestMapping("/recetas")
 public class RecetasController {
 
-     private final RecetasService recetasService;
+    private final RecetasService recetasService;
+    private final ComentariosService comentariosService;
 
-    public RecetasController(RecetasService recetasService) {
+    public RecetasController(RecetasService recetasService, ComentariosService comentariosService) {
         this.recetasService = recetasService;
+        this.comentariosService = comentariosService;
     }
 
     @GetMapping("/{id}")
@@ -138,6 +145,33 @@ public class RecetasController {
         } else {
             return ResponseEntity.notFound().build(); // No se encontró o no es válido
         }
+    }
+
+
+    @PostMapping("/{id}/comentarios")
+    public ResponseEntity<String> agregarComentario(
+        @PathVariable Long id,
+        @Validated @RequestBody ComentarioDTO comentarioDto) {
+
+        // Convierte el DTO en una entidad de dominio
+        Comentarios nuevoComentario = new Comentarios();
+        nuevoComentario.setRecetaId(id); // ID de la receta desde la URL
+        nuevoComentario.setUsuario(comentarioDto.getUsuario());
+        nuevoComentario.setComentario(comentarioDto.getComentario());
+        nuevoComentario.setPuntuacion(comentarioDto.getPuntuacion());
+
+        // Llama al servicio para guardar el comentario
+        comentariosService.crearComentario(nuevoComentario);
+
+        return ResponseEntity.ok("Comentario agregado exitosamente");
+    }
+
+
+    // Obtener comentarios de una receta
+    @GetMapping("/{id}/comentarios")
+    public ResponseEntity<List<Comentarios>> obtenerComentarios(@PathVariable Long id) {
+        List<Comentarios> comentarios = comentariosService.obtenerComentariosPorReceta(id);
+        return ResponseEntity.ok(comentarios);
     }
 
 }
