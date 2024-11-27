@@ -1,6 +1,8 @@
 package com.example.servicio_recetas.model;
 
 import java.sql.Date;
+import java.util.Objects;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -86,5 +88,38 @@ public class Recetas {
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
-   
+
+    // Implementación de equals y hashCode
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Recetas recetas = (Recetas) o;
+        return Objects.equals(recetaId, recetas.recetaId) &&
+                Objects.equals(nombre, recetas.nombre) &&
+                Objects.equals(categoria, recetas.categoria) &&
+                Objects.equals(ingredientes, recetas.ingredientes) &&
+                Objects.equals(origen, recetas.origen) &&
+                Objects.equals(dificultad, recetas.dificultad) &&
+                Objects.equals(fechaCreacion, recetas.fechaCreacion);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(recetaId, nombre, categoria, ingredientes, origen, dificultad, fechaCreacion);
+    }
+
+    // Implementación de toString
+    @Override
+    public String toString() {
+        return "Recetas{" +
+                "recetaId=" + recetaId +
+                ", nombre='" + nombre + '\'' +
+                ", categoria='" + categoria + '\'' +
+                ", ingredientes='" + ingredientes + '\'' +
+                ", origen='" + origen + '\'' +
+                ", dificultad='" + dificultad + '\'' +
+                ", fechaCreacion=" + fechaCreacion +
+                '}';
+    }
 }

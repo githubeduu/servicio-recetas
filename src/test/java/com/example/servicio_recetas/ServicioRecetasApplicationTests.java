@@ -7,7 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ServicioRecetasApplicationTests {
 
 	@Test
-	void contextLoads() {
-	}
+    void mainMethodTest() {
+        // Ejecuta el método main de la clase principal
+        ServicioRecetasApplication.main(new String[] {});
+    }
 
 }
